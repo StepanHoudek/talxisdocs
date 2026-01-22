@@ -485,215 +485,274 @@ The control renders ribbon buttons for each row when properly configured.
 
 Inline ribbon buttons affect individual rows, while main ribbon buttons affect the entire dataset.
 
-## Control Properties
+## Bindings Summary
 
 <table>
   <thead>
     <tr>
       <th>Property Name</th>
       <th>Description</th>
-      <th>Type</th>
-      <th>Default</th>
+      <th>Of Type</th>
+      <th>Input</th>
+      <th>Output</th>
+      <th>Usage</th>
       <th>Required</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>bindingField</td>
-      <td>Binding Field</td>
+      <td><span style="width: 300px; display: block">Binding Field</span></td>
       <td><code>SingleLine.Text</code></td>
-      <td>-</td>
-      <td>Yes</td>
+      <td><code>N/A</code></td>
+      <td><code>N/A</code></td>
+      <td><code>bound</code></td>
+      <td><code>true</code></td>
     </tr>
     <tr>
       <td>DataProvider</td>
-      <td>Data Provider for fetching data</td>
+      <td>Data Provider that the control will use to fetch data.</td>
       <td><code>Enum ("Memory" | "FetchXml")</code></td>
       <td><code>"FetchXml"</code></td>
-      <td>Yes</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>true</code></td>
     </tr>
      <tr>
       <td>Data</td>
-      <td>Data Source (FetchXml for FetchXml Provider, JSON array for Memory Provider)</td>
+      <td>Data Source depending on the provider (FetchXml for FetchXml Provider, JSON array for Memory Provider).</td>
       <td><code>Multiple</code></td>
       <td><code>"&lt;fetch&gt;&lt;entity name=&quot;account&quot;&gt;&lt;attribute name=&quot;name&quot;/&gt;&lt;/entity&gt;&lt;/fetch&gt;"</code></td>
-      <td>Yes</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>true</code></td>
     </tr>
     <tr>
       <td>Columns</td>
-      <td>JSON array containing column definitions</td>
+      <td>JSON array containing the column definitions.</td>
       <td><code>Multiple</code></td>
       <td><code>[{"name": "name", "isHidden": false}]</code></td>
-      <td>Yes</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>true</code></td>
     </tr>
     <tr>
       <td>EntityMetadata</td>
-      <td>Override/define Entity Metadata</td>
+      <td>Optional property allowing you to override/define Entity Metadata</td>
       <td><code>Multiple</code></td>
       <td><code>{"DisplayCollectionName": "Custom Collection Name"}</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>Height</td>
-      <td>Force fixed height</td>
+      <td>Can be used to force the control to always stay at fixed height.</td>
       <td><code>SingleLine.Text</code></td>
       <td><code>500px</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>RowHeight</td>
-      <td>Custom row height</td>
+      <td>Sets a custom height for rows.</td>
       <td><code>Whole.None</code></td>
       <td><code>42</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnableEditing</td>
-      <td>Enable editing functionality</td>
+      <td>Enable or disable editing functionality in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"yes"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnablePagination</td>
-      <td>Enable pagination</td>
+      <td>Enable or disable pagination in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"yes"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnableFiltering</td>
-      <td>Enable filtering options</td>
+      <td>Enable or disable filtering options in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"yes"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnableSorting</td>
-      <td>Enable sorting options</td>
+      <td>Enable or disable sorting options in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"yes"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnableNavigation</td>
-      <td>Enable navigation options</td>
+      <td>Enable or disable navigation options in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"yes"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnableOptionSetColors</td>
-      <td>Enable OptionSet colors</td>
+      <td>Enable or disable OptionSet colors in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"no"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>SelectableRows</td>
-      <td>Row selection type</td>
+      <td>Defines if and how rows can be selected.</td>
       <td><code>Enum ("none" | "single" | "multiple")</code></td>
       <td><code>"single"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnableQuickFind</td>
-      <td>Enable Quick Find feature</td>
+      <td>Enable or disable the Quick Find feature in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"no"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnablePageSizeSwitcher</td>
-      <td>Allow page size changes</td>
+      <td>Whether the user should be allowed to change number of rows per page.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"yes"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnableAggregation</td>
-      <td>Allow column aggregations</td>
+      <td>Whether the user should be allowed to set aggregations on columns</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"yes"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnableGrouping</td>
-      <td>Enable grouping functionality</td>
+      <td>Enable or disable grouping functionality in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"no"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnableGroupedColumnsPinning</td>
-      <td>Enable pinning of grouped columns</td>
+      <td>Enable or disable pinning of grouped columns in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"yes"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnableCommandBar</td>
-      <td>Enable command bar</td>
+      <td>Enable or disable the command bar in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"yes"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnableAutoSave</td>
-      <td>Enable automatic saving</td>
+      <td>Enable or disable automatic saving of changes in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"no"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnableRecordCount</td>
-      <td>Display record count</td>
+      <td>Enable or disable display of record count in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"yes"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>EnableZebra</td>
-      <td>Enable zebra striping (alternating row colors)</td>
+      <td>Enable or disable zebra striping (alternating row colors) in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"yes"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>InlineRibbonButtonIds</td>
-      <td>Comma-separated list of inline ribbon button IDs</td>
+      <td>Comma-separated list of inline ribbon button IDs to display in the control.</td>
       <td><code>SingleLine.Text</code></td>
-      <td>-</td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>DefaultExpandedGroupLevel</td>
-      <td>Default group expansion level when grouping is enabled</td>
+      <td>Default level of group expansion when grouping is enabled.</td>
       <td><code>Whole.None</code></td>
       <td><code>-1</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>GroupingType</td>
-      <td>Grouping type when grouping is enabled</td>
+      <td>Defines the type of grouping to use when grouping is enabled.</td>
       <td><code>Enum ("nested" | "flat")</code></td>
       <td><code>"nested"</code></td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>ClientApiWebresourceName</td>
-      <td>Web resource name containing client API functions</td>
+      <td>Name of the webresource containing client API functions for extended functionality.</td>
       <td><code>SingleLine.Text</code></td>
-      <td>-</td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
     <tr>
       <td>ClientApiFunctionName</td>
-      <td>Client API function name for extended functionality</td>
+      <td>Name of the client API function to call for extended functionality.</td>
       <td><code>SingleLine.Text</code></td>
-      <td>-</td>
-      <td>No</td>
+      <td><code>N/A</code></td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
     </tr>
+  
   </tbody>
 </table>
 
