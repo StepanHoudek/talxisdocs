@@ -3,10 +3,6 @@ Author: Dominik Brych
 ---
 # Virtual Dataset
 
-## Visual Example
-
-<iframe style="border: 0px solid rgba(0, 0, 0, 1);   border-radius: 10px;" width="730" height="600" src="https://embed.figma.com/proto/CIf7LPbQa9gZTMTiH1e07g/NETWORG-Web-UI-Master?page-id=3654%3A12560&node-id=3654-16688&viewport=136%2C185%2C0.19&scaling=scale-down&content-scaling=fixed&starting-point-node-id=3654%3A16688&embed-host=share" allowfullscreen></iframe>
-
 ## Overview
 
 Virtual Dataset binds Grid controls to custom data sources through two data providers: **Memory** and **FetchXml**. The Memory Provider uses in-memory data collections, while the FetchXml Provider retrieves data through FetchXml queries.
@@ -25,6 +21,10 @@ Both providers support:
 - Editing (including linked entities)
 - Row Selection
 - Quick Find
+
+## Visual Example
+
+<iframe style="border: 0px solid rgba(0, 0, 0, 1);   border-radius: 10px;" width="730" height="600" src="https://embed.figma.com/proto/CIf7LPbQa9gZTMTiH1e07g/NETWORG-Web-UI-Master?page-id=3654%3A12560&node-id=3654-16688&viewport=136%2C185%2C0.19&scaling=scale-down&content-scaling=fixed&starting-point-node-id=3654%3A16688&embed-host=share" allowfullscreen></iframe>
 
 ## Data Providers
 
@@ -251,7 +251,7 @@ File and Image columns in Memory Provider require the following properties:
 
 ## Column Configuration
 
-Columns are defined using a stringified JSON array. Each object follows the [PCF Dataset Column interface](https://learn.microsoft.com/en-us/power-apps/developer/component-framework/reference/column) specification.
+Columns are defined using a stringified JSON array in the Columns binding. Each object follows the [PCF Dataset Column interface](https://learn.microsoft.com/en-us/power-apps/developer/component-framework/reference/column) specification.
 
 ```json
 [
@@ -330,13 +330,9 @@ The native column interface includes additional properties:
 
 ### Provider-Specific Requirements
 
-**Minimum required properties for column display:**
-- **FetchXml Provider**: `name` (when no `savedqueryid` is present in FetchXml)
-- **Memory Provider**: `name`, `displayName`, and [`dataType`](https://learn.microsoft.com/en-us/power-apps/developer/component-framework/manifest-schema-reference/type)
-
 #### Memory Provider
 
-All columns must be explicitly defined in the Column binding. Undefined columns will not appear.
+All columns must be explicitly defined in the Columns binding. Undefined columns will not appear in the grid. Each column requires at least the `name` and `dataType` properties.
 
 Quick Find columns can be specified via [Entity Metadata](#entity-metadata) binding using the `QuickFindColumns` property. This contains a string array of column names for full text search. Without this property, search operates on the primary column. If no primary column exists, full text search is disabled.
 
@@ -349,7 +345,7 @@ Quick Find columns can be specified via [Entity Metadata](#entity-metadata) bind
 
 FetchXml Provider handles columns differently than Memory Provider:
 
-- **Without `savedqueryid`**: Behaves like Memory Provider - only explicitly specified columns in Columns binding are displayed
+- **Without `savedqueryid`**: Behaves like Memory Provider - only explicitly specified columns in Columns binding are displayed (only `name` property is mandatory)
 - **With `savedqueryid`**: Automatically retrieves associated layoutxml to define columns
 
 When both Columns binding and `savedqueryid` are present:
@@ -360,7 +356,7 @@ When both Columns binding and `savedqueryid` are present:
 
 ##### Virtual Columns
 
-FetchXml Provider supports virtual columns that do not exist in Dataverse. Set the `isVirtual` property to `true` in the column definition to indicate this to the provider. The provider will skip fetching metadata from Dataverse for virtual columns. These columns support standard operations like `setValue`, `getValue`, expressions, and other manipulations.
+FetchXml Provider supports virtual columns that do not exist in Dataverse. Set the `isVirtual` property to `true` in the column definition to indicate this to the provider.
 
 
 ## Entity Metadata
@@ -467,7 +463,7 @@ The control includes a built-in ribbon for grid refresh and change management (s
 
 ### Inline Ribbon
 
-Display record-contextual buttons within each row by defining a special column named `_talxis_gridRibbonButtons`. Additional properties can be set on this column like any standard column.
+Display record-contextual buttons within each row by defining a special column named `_talxis_gridRibbonButtons`.
 
 For custom buttons, include their IDs in the `InlineRibbonButtonIds` binding using comma-separated format: `"button1Id,button2Id,button3Id"`.
 
