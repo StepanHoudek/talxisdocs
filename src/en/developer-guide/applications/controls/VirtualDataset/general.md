@@ -338,6 +338,13 @@ Each provider requires different minimum properties for column display:
 
 All columns must be explicitly defined in the Column binding. Undefined columns will not appear in the control.
 
+Quick Find columns can be specified via [Entity Metadata](#entity-metadata) binding using the `QuickFindColumns` property. It contains a string array of column names that should be used for full text search. If the property is not provided, the search will happen on primary column. If no primary column is present, full text search will be disabled.
+
+```json
+  { PrimaryIdAttribute: "id", QuickFindColumns: ["email", "text"] }
+```
+*Example of setting quick find on `email` and `text` columns.*
+
 #### FetchXml Provider
 
 FetchXml Provider handles column binding in a slightly different way compared to other providers. When your FetchXml query does not include a `savedqueryid`, it behaves the same as MemoryProvider: any columns not explicitly specified in the Columns binding will be ignored. However, if the FetchXml includes a `savedqueryid`, the control retrieves the associated layoutxml to define the columns automatically.
@@ -352,7 +359,7 @@ FetchXml Provider offers support for virtual columns, which are columns that do 
 
 ## Entity Metadata
 
-Entity Metadata binding enables definition or override of [Xrm Entity Metadata](https://learn.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.metadata.entitymetadata?view=dataverse-sdk-latest) properties. Common use cases include customizing `DisplayCollectionName` for improved dataset description. The Memory Provider requires the `PrimaryIdAttribute` property. The binding accepts a stringified JSON object following the [Xrm Entity Metadata](https://learn.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.metadata.entitymetadata?view=dataverse-sdk-latest) interface.
+Entity Metadata binding enables definition or override of [Xrm Entity Metadata](https://learn.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.metadata.entitymetadata?view=dataverse-sdk-latest) properties. Memory Provider **requires** the `PrimaryIdAttribute` property to be set. The binding accepts a stringified JSON object following the [Xrm Entity Metadata](https://learn.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.metadata.entitymetadata?view=dataverse-sdk-latest) interface.
 
 ## Height Configuration
 
@@ -370,7 +377,7 @@ The control height can be configured using multiple approaches. By default, the 
 ## Saving
 The control supports both manual and automatic saving of changes made to editable fields. Manual saving is facilitated through ribbon buttons, while automatic saving can be enabled via the `EnableAutoSave` binding. When auto-save is activated, any modifications to editable fields are saved immediately without user intervention. You can use the `onBeforeRecordSaved` and `onAfterRecordSaved` events in the Client API to implement custom logic before and after the save operation. You can also change saving behavior by using the [`onRecordSave` interceptor](./ClientExtensibility/general.md/#onrecordsave).
 
-In case of **FetchXml Provider**, the control saves changes directly to the Dataverse. For **Memory Provider**, changes are propagated to the data source directly. This means that calling `dataset.getDataSource()` after editing will return the updated data.
+In case of **FetchXml Provider**, the control saves changes directly to the Dataverse. For **Memory Provider**, changes are propagated to the data source directly. This means that calling `dataset.getDataSource()` after saving will return the updated data.
 ## Grouping and Aggregations
 
 Data can be grouped by specific columns with value aggregation for each group using the `grouping` and `aggregation` properties in column definitions.
@@ -442,7 +449,7 @@ Restrict user customization of column groupings and aggregations using the `Supp
 
 ## Ribbon
 
-Virtual Dataset includes a built-in ribbon for various actions including grid refresh and change management (save/dismiss). Ribbon buttons support customization through Client API.
+The control includes a built-in ribbon for various actions including grid refresh and change management (save/dismiss). Ribbon can be customized through Client API.
 
 ![Ribbon](/.attachments/applications/Controls/VirtualDataset/ribbon.png)
 *Grid ribbon*
@@ -551,8 +558,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableEditing</td>
       <td>Enable or disable editing functionality in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -560,8 +567,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnablePagination</td>
       <td>Enable or disable pagination in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -569,8 +576,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableFiltering</td>
       <td>Enable or disable filtering options in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -578,8 +585,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableSorting</td>
       <td>Enable or disable sorting options in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -587,8 +594,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableNavigation</td>
       <td>Enable or disable navigation options in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -596,8 +603,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableOptionSetColors</td>
       <td>Enable or disable OptionSet colors in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"No"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"no"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -605,8 +612,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>SelectableRows</td>
       <td>Defines if and how rows can be selected.</td>
-      <td><code>Enum ("None" | "Single" | "Multiple")</code></td>
-      <td><code>"Single"</code></td>
+      <td><code>Enum ("none" | "single" | "multiple")</code></td>
+      <td><code>"single"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -614,8 +621,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableQuickFind</td>
       <td>Enable or disable the Quick Find feature in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"No"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"no"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -623,8 +630,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnablePageSizeSwitcher</td>
       <td>Whether the user should be allowed to change number of rows per page.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -632,8 +639,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableAggregation</td>
       <td>Whether the user should be allowed to set aggregations on columns</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -641,8 +648,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableGrouping</td>
       <td>Enable or disable grouping functionality in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"No"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"no"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -650,8 +657,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableGroupedColumnsPinning</td>
       <td>Enable or disable pinning of grouped columns in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -659,8 +666,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableCommandBar</td>
       <td>Enable or disable the command bar in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -668,8 +675,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableAutoSave</td>
       <td>Enable or disable automatic saving of changes in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"No"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"no"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -677,8 +684,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableRecordCount</td>
       <td>Enable or disable display of record count in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -686,8 +693,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableZebra</td>
       <td>Enable or disable zebra striping (alternating row colors) in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -713,8 +720,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>GroupingType</td>
       <td>Defines the type of grouping to use when grouping is enabled.</td>
-      <td><code>Enum ("Nested" | "Flat")</code></td>
-      <td><code>"Nested"</code></td>
+      <td><code>Enum ("nested" | "flat")</code></td>
+      <td><code>"nested"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
