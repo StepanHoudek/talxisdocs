@@ -3,42 +3,43 @@ Author: Dominik Brych
 ---
 # Virtual Dataset
 
+## Overview
+
+Virtual Dataset binds Grid controls to custom data sources through two data providers: **Memory** and **FetchXml**. The Memory Provider uses in-memory data collections, while the FetchXml Provider retrieves data through FetchXml queries.
+
+![Attachments Grid Displayed On Form](/.attachments/applications/Controls/VirtualDataset/virtualdataset.png)
+
+### Supported Features
+
+Both providers support:
+- Sorting
+- Filtering 
+- Aggregations
+- Grouping
+- Paging
+- Validation
+- Editing (including linked entities)
+- Row Selection
+- Quick Find
+
 ## Visual Example
 
 <iframe style="border: 0px solid rgba(0, 0, 0, 1);   border-radius: 10px;" width="730" height="600" src="https://embed.figma.com/proto/CIf7LPbQa9gZTMTiH1e07g/NETWORG-Web-UI-Master?page-id=3654%3A12560&node-id=3654-16688&viewport=136%2C185%2C0.19&scaling=scale-down&content-scaling=fixed&starting-point-node-id=3654%3A16688&embed-host=share" allowfullscreen></iframe>
 
-## Description
-
-Virtual Dataset enables binding of a Grid control to a field using custom data sources. The control supports two data providers: Memory and FetchXml. The Memory Provider handles in-memory data collections, while the FetchXml Provider processes data retrieved through FetchXml queries. Both providers support the following dataset features:
-
-- **Sorting**
-- **Filtering**
-- **Aggregations**
-- **Grouping**
-- **Paging**
-- **Validation**
-- **Editing (including linked entities)**
-- **Row Selection**
-- **Quick Find**
-
-![Attachments Grid Displayed On Form](/.attachments/applications/Controls/VirtualDataset/virtualdataset.png)
-
 ## Data Providers
 
-The control supports two data providers: **FetchXml** and **Memory**.
+### FetchXml Provider
 
-### FetchXml Data Provider
+Uses FetchXml strings as the data source for retrieving data from Dataverse.
 
-Requires a valid FetchXml string as the data source.
+### Memory Provider
 
-### Memory Data Provider
-
-Requires a stringified JSON array containing key-value pairs where keys represent column names and values represent column data. The data structure follows the OData response format:
+Uses stringified JSON arrays containing key-value pairs where keys represent column names and values represent column data. The data structure follows the OData response format:
 - OptionSets use numeric values
 - Lookups use GUIDs
 - Other data types follow standard OData conventions
 
-To determine the correct value format for a specific data type, reference the structure returned by OData queries for entities containing that data type.
+For correct value formatting, reference OData query responses for entities containing the required data types.
 
 ```json
 {
@@ -110,17 +111,17 @@ To determine the correct value format for a specific data type, reference the st
 }
 ```
 
-#### Lookup Column
+#### Lookup Columns
 
-Lookup columns in Memory Provider require three properties in the data source:
+Lookup columns in Memory Provider require three properties:
 
-* **_{lookupColumnName}_value**: GUID identifying the lookup record. This serves as the unique identifier within the dataset and integrates with the Dataset Client API. When users interact with lookup records (e.g., `onDatasetItemOpened` event), this GUID appears in the `entityReference`.
+* **_{lookupColumnName}_value**: GUID identifying the lookup record. Used as the unique identifier within the dataset and integrates with the Dataset Client API. For user interactions with lookup records (e.g., `onDatasetItemOpened` event), this GUID appears in the `entityReference`.
 
-* **_{lookupColumnName}_@Microsoft.Dynamics.CRM.lookuplogicalname**: Logical name corresponding to the record table in Dataverse. This can reference an existing Dataverse table (entity bound) or use an arbitrary string (virtual). Entity-bound lookups enable record searching and value editing. Add the logical name to the `Targets` metadata property for full entity binding. Virtual lookups disable editing functionality.
+* **_{lookupColumnName}_@Microsoft.Dynamics.CRM.lookuplogicalname**: Logical name corresponding to the record table in Dataverse. Can reference an existing Dataverse table (entity bound) or use an arbitrary string (virtual). Entity-bound lookups enable record searching and value editing. Add the logical name to the `Targets` metadata property for full entity binding. Virtual lookups disable editing functionality.
 
 * **_{lookupColumnName}_value@OData.Community.Display.V1.FormattedValue**: Formatted value displayed to users.
 
-**Example of entity bound Lookup field:**
+**Entity Bound Lookup Example:**
 
 ```json
 {
@@ -153,7 +154,7 @@ Lookup columns in Memory Provider require three properties in the data source:
 ```
 *Data Source*
 
-**Example of virtual Lookup field:**
+**Virtual Lookup Example:**
 ```json
 {
    "name":"virtualLookup",
@@ -187,7 +188,7 @@ Lookup columns in Memory Provider require three properties in the data source:
 
 #### File and Image Columns
 
-File and Image columns in Memory Provider require the following properties in the data source:
+File and Image columns in Memory Provider require the following properties:
 
 | Property                        | Description                                                                 |
 |---------------------------------|-----------------------------------------------------------------------------|
@@ -198,7 +199,7 @@ File and Image columns in Memory Provider require the following properties in th
 | `{fileColumnName.fileurl}`       | URL where the file can be downloaded from.                                  |
 | `{fileColumnName.thumbnailurl}`   | URL for a thumbnail preview of the image (required for image columns only). |
 
-**Example of a memory provider file and image fields:**
+**Memory Provider File and Image Example:**
 
 ```json
 [
@@ -248,9 +249,9 @@ File and Image columns in Memory Provider require the following properties in th
 *Data Source*
 
 
-## Columns
+## Column Configuration
 
-Column binding defines properties for each column using a stringified JSON array. Each object in the array follows the [PCF Dataset Column interface](https://learn.microsoft.com/en-us/power-apps/developer/component-framework/reference/column) specification.
+Columns are defined using a stringified JSON array in the Columns binding. Each object follows the [PCF Dataset Column interface](https://learn.microsoft.com/en-us/power-apps/developer/component-framework/reference/column) specification.
 
 ```json
 [
@@ -309,84 +310,128 @@ Column binding defines properties for each column using a stringified JSON array
 ]
 ```
 
-> **_NOTE:_** Columns defined using `setColumns` in the Client API override configurations set in the Columns binding and provider defaults.
+> **Note:** Columns defined using `setColumns` in the Client API override configurations set in the Columns binding and provider defaults.
 
-### Extensions
+### Extended Properties
 
-The native column interface has been extended with additional properties to provide enhanced functionality.
+The native column interface includes additional properties:
 
-| Prop Name       | Description                                                                                                                                                                                                                   |
-|-----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `type`        | A column can serve multiple purposes: it may contain data or fulfill other roles, such as displaying a ribbon or notifications. This property specifies whether the control treats the column as a data or action column, adapting its behavior accordingly (e.g., excluding data-specific features like non-editable icons in headers). |
-| `alignment`   | Defines the alignment of the column. If not specified, numbers default to right-aligned, while other types default to left-aligned. |
-| `isDraggable` | Determines if the user can customize the column's position. |
-| `oneClickEdit`| Removes the need to double-click a cell to edit its value. Note: Enabling this on too many columns may reduce performance; use only when the performance decrease is acceptable for your use case. |
+| Property      | Description                                                                                                                                                                                                                   |
+|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `type`        | Specifies whether the column contains data or serves other purposes (e.g., ribbon or notifications). The control adapts its behavior accordingly (e.g., excluding data-specific features like non-editable icons in headers). |
+| `alignment`   | Column alignment. Numbers default to right-aligned, other types default to left-aligned if not specified. |
+| `isDraggable` | Allows users to customize the column position. |
+| `oneClickEdit`| Enables editing without double-clicking. Note: Enabling on many columns may reduce performance. |
 | `controls`    | Used to set up [cell customizers](./CellCustomizers/general.md). |
-| `autoHeight`  | If specified, the control will try to fit the row height to cell's content. User will also be able to adjust the row height manually. This setting defaults to `true` for columns with multiline datatype. |
-| `grouping`    | Tells the provider that it should [group data](#grouping-and-aggregations) by this column. |
-| `aggregation` | Tells the provider that it should [aggregate values](#additional-customization) from this column. |
-| `metadata`    | Allows you to define or override [Xrm Attribute Metadata](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/reference/attributemetadata?view=dataverse-latest) for a column. |                          |                                                                               |
+| `autoHeight`  | Fits row height to cell content and allows manual adjustment. Defaults to `true` for multiline datatype columns. |
+| `grouping`    | Configures the provider to [group data](#grouping-and-aggregations) by this column. |
+| `aggregation` | Configures the provider to [aggregate values](#grouping-and-aggregations) from this column. |
+| `metadata`    | Defines or overrides [Xrm Attribute Metadata](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/reference/attributemetadata?view=dataverse-latest) for a column. |
 
-### Provider-Specific Features
-
-Each provider requires different minimum properties for column display:
-
-- **FetchXml Provider**: `name` (if no `savedqueryid` is present in FetchXml)
-- **Memory Provider**: `name`, `displayName`, and [`dataType`](https://learn.microsoft.com/en-us/power-apps/developer/component-framework/manifest-schema-reference/type)
+### Provider-Specific Requirements
 
 #### Memory Provider
 
-All columns must be explicitly defined in the Column binding. Undefined columns will not appear in the control.
+All columns must be explicitly defined in the Columns binding. Undefined columns will not appear in the grid. Each column requires at least the `name` and `dataType` properties.
+
+Quick Find columns can be specified via [Entity Metadata](#entity-metadata) binding using the `QuickFindColumns` property. This contains a string array of column names for full text search. Without this property, search operates on the primary column. If no primary column exists, full text search is disabled.
+
+```json
+{ "PrimaryIdAttribute": "id", "QuickFindColumns": ["email", "text"] }
+```
+*Setting quick find on `email` and `text` columns.*
+
+If you wish to use Edit Columns feature with Memory Provider, you must specify all columns that can be added via Edit Columns through the `SavedQueries` prop in  [Entity Metadata](#entity-metadata) binding.
+
+```json
+{ "PrimaryIdAttribute": "id", "SavedQueries": [{
+  "columns": [{
+        "name": "text",
+        "alias": "text",
+        "dataType": "SingleLine.Text",
+        "displayName": "Text",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "isPrimary": true,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "multilinetext",
+        "alias": "multilinetext",
+        "dataType": "Multiple",
+        "displayName": "Multiline Text",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    }]
+}] }
+```
+*Setting up Edit Columns with `text` and `multilinetext` columns.*
 
 #### FetchXml Provider
 
-FetchXml Provider handles column binding in a slightly different way compared to other providers. When your FetchXml query does not include a `savedqueryid`, it behaves the same as MemoryProvider: any columns not explicitly specified in the Columns binding will be ignored. However, if the FetchXml includes a `savedqueryid`, the control retrieves the associated layoutxml to define the columns automatically.
+FetchXml Provider handles columns differently than Memory Provider:
 
-When you define columns in the Columns binding **and** the FetchXml contains a `savedqueryid`, the details provided in the Columns binding take precedence, **overriding** the corresponding information in the `layoutxml`. Additionally, if you specify a column in the Columns binding that isn’t present in the `layoutxml`, it will be added to the control alongside the columns defined by the layout.
+- **Without `savedqueryid`**: Behaves like Memory Provider - only explicitly specified columns in Columns binding are displayed (only `name` property is mandatory)
+- **With `savedqueryid`**: Automatically retrieves associated layoutxml to define columns
+
+When both Columns binding and `savedqueryid` are present:
+- Columns binding details override corresponding layoutxml information
+- Additional columns in Columns binding are added alongside layoutxml columns
 
 
 
 ##### Virtual Columns
-FetchXml Provider offers support for virtual columns, which are columns that do not exist in Dataverse. Instead, it’s up to the developer to define their behavior and functionality. To designate a column as virtual, set the `isVirtual` prop on it's definition to `true`. This signals the provider that it should skip fetching metadata for that column from Dataverse. Once defined, virtual columns can be manipulated just like regular columns—allowing you to use actions such as `setValue` and `getValue`, apply expressions, and perform other operations as needed.
+
+FetchXml Provider supports virtual columns that do not exist in Dataverse. Set the `isVirtual` property to `true` in the column definition to indicate this to the provider.
 
 
 ## Entity Metadata
 
-Entity Metadata binding enables definition or override of [Xrm Entity Metadata](https://learn.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.metadata.entitymetadata?view=dataverse-sdk-latest) properties. Common use cases include customizing `DisplayCollectionName` for improved dataset description. The Memory Provider requires the `PrimaryIdAttribute` property. The binding accepts a stringified JSON object following the [Xrm Entity Metadata](https://learn.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.metadata.entitymetadata?view=dataverse-sdk-latest) interface.
+Entity Metadata binding defines or overrides [Xrm Entity Metadata](https://learn.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.metadata.entitymetadata?view=dataverse-sdk-latest) properties. Memory Provider **requires** the `PrimaryIdAttribute` property. The binding accepts a stringified JSON object following the [Xrm Entity Metadata](https://learn.microsoft.com/en-us/dotnet/api/microsoft.xrm.sdk.metadata.entitymetadata?view=dataverse-sdk-latest) interface.
 
 ## Height Configuration
 
-The control height can be configured using multiple approaches. By default, the control displays up to 15 rows with automatic scrollbar activation beyond this limit. This constraint ensures optimal performance as row virtualization requires fixed container heights.
+Control height configuration options:
 
-**Page Size Limitation**: Reduces records per page, automatically adjusting control height to fit the specified number of rows (maximum 15). Configure through FetchXml queries or Client API. This is the recommended approach for height management.
+**Default**: Displays up to 15 rows with automatic scrollbar. Row virtualization requires fixed container heights for optimal performance.
 
-**Fixed Height Property**: Sets a specific pixel value for scenarios requiring many visible rows without pagination. Use fixed pixel values (e.g., `500px`). Performance may degrade with excessively large containers.
+**Page Size Limitation**: Reduces records per page and adjusts control height to fit specified rows (maximum 15). Configure through FetchXml queries or Client API. This is the recommended approach.
 
-**Full Tab Expansion**: Utilizes the native "Expand to full tab" feature, stretching the control across the entire tab. Recommended for displaying large datasets. Requires setting the `Height` property to `100%`.
+**Fixed Height Property**: Sets specific pixel values (e.g., `500px`) for scenarios requiring many visible rows without pagination. Performance may degrade with excessively large containers.
+
+**Full Tab Expansion**: Uses the native "Expand to full tab" feature to stretch the control across the entire tab. Set the `Height` property to `100%` for large datasets.
 
 ![Control at Full Height](/.attachments/applications/Controls/VirtualDataset/full_height.png)
-*Control with Expand to full tab feature on.*
+*Control with "Expand to full tab" feature enabled*
 
 ## Saving
-The control supports both manual and automatic saving of changes made to editable fields. Manual saving is facilitated through ribbon buttons, while automatic saving can be enabled via the `EnableAutoSave` binding. When auto-save is activated, any modifications to editable fields are saved immediately without user intervention. You can use the `onBeforeRecordSaved` and `onAfterRecordSaved` events in the Client API to implement custom logic before and after the save operation. You can also change saving behavior by using the [`onRecordSave` interceptor](./ClientExtensibility/general.md/#onrecordsave).
 
-In case of **FetchXml Provider**, the control saves changes directly to the Dataverse. For **Memory Provider**, changes are propagated to the data source directly. This means that calling `dataset.getDataSource()` after editing will return the updated data.
+The control supports manual and automatic saving. Manual saving uses ribbon buttons, while automatic saving can be enabled via the `EnableAutoSave` binding. With auto-save enabled, editable field modifications save immediately.
+
+Use `onBeforeRecordSaved` and `onAfterRecordSaved` events in the Client API for custom logic. Modify saving behavior with the [`onRecordSave` interceptor](./ClientExtensibility/general.md/#onrecordsave).
+
+**Provider behavior:**
+- **FetchXml Provider**: Saves changes directly to Dataverse
+- **Memory Provider**: Updates the data source directly (retrievable via `dataset.getDataSource()` after saving)
 ## Grouping and Aggregations
 
-Data can be grouped by specific columns with value aggregation for each group using the `grouping` and `aggregation` properties in column definitions.
+Group data by specific columns with value aggregation for each group using the `grouping` and `aggregation` properties in column definitions.
 
 The `grouping` property requires the `isGrouped` boolean to enable column-based data grouping.
 
-The `aggregation` property requires the `aggregationFunction` parameter. Available functions depend on column type and provider:
+The `aggregation` property requires the `aggregationFunction` parameter. Available functions depend on column type and provider: `countcolumn`, `count`, `min`, `max`, `sum`, `avg`
 
-`countcolumn`, `count`, `min`, `max`, `sum`, `avg`
+> **Note:** Using `aggregation` without grouping creates a "Total row" at the bottom with aggregated values for all rows.
 
-> **_NOTE:_** Specifying only `aggregation` without grouping creates a "Total row" at the control bottom with aggregated values for all rows.
-
-Pre-configured grouping and aggregations load automatically. Users can modify these settings through the control interface when enabled via `EnableAggregation` and `EnableGrouping` bindings.
+Pre-configured grouping and aggregations load automatically. Users can modify these through the control interface when enabled via `EnableAggregation` and `EnableGrouping` bindings.
 
 ![Grid grouped by two columns](/.attachments/applications/Controls/VirtualDataset/grouping_aggregations.png)
-*Grid grouped by two columns with aggregations applied.*
+*Grid grouped by two columns with aggregations*
 
 
 ```json
@@ -413,11 +458,11 @@ Pre-configured grouping and aggregations load automatically. Users can modify th
   }
 }
 ```
-*Example of Grouping and Aggregation definitions*
+*Grouping and Aggregation definitions example*
 
 Restrict user customization of column groupings and aggregations using the `SupportedAggregations` and `CanBeGrouped` metadata properties.
 
-> **_NOTE:_** These settings only restrict UI customization. Grouping or aggregation defined in column definitions applies regardless of these restrictions.
+> **Note:** These settings only restrict UI customization. Grouping or aggregation defined in column definitions applies regardless of these restrictions.
 
 ```json
 {
@@ -433,25 +478,25 @@ Restrict user customization of column groupings and aggregations using the `Supp
   }
 }
 ```
-*Restricting aggregations and groupings for `Amount` column.*
+*Restricting aggregations and groupings for Amount column*
 
 ### Limitations
 
-* Date columns support grouping by specific date values only. Grouping by time periods (month, year, etc.) is not currently supported.
-* Nested grouping restricts selection to groups that do not contain other grouped records for performance reasons.
+* Date columns support grouping by specific date values only. Time period grouping (month, year, etc.) is not supported.
+* Nested grouping restricts selection to groups without other grouped records for performance reasons.
 
 ## Ribbon
 
-Virtual Dataset includes a built-in ribbon for various actions including grid refresh and change management (save/dismiss). Ribbon buttons support customization through Client API.
+The control includes a built-in ribbon for grid refresh and change management (save/dismiss). Customize the ribbon through Client API.
 
 ![Ribbon](/.attachments/applications/Controls/VirtualDataset/ribbon.png)
 *Grid ribbon*
 
 ### Inline Ribbon
 
-Display record-contextual buttons within each row by defining a special column named `_talxis_gridRibbonButtons`. You can set any additional properties on this column as you would on a standard one. 
+Display record-contextual buttons within each row by defining a special column named `_talxis_gridRibbonButtons`.
 
-If you are adding your own custom buttons, make sure you include their id in the `InlineRibbonButtonIds` binding. The ids's format should be comma-separated string, eg. `"button1Id,button2Id,button3Id"`.
+For custom buttons, include their IDs in the `InlineRibbonButtonIds` binding using comma-separated format: `"button1Id,button2Id,button3Id"`.
 
 When properly configured, the control renders ribbon buttons for each row.
 
@@ -464,6 +509,7 @@ When properly configured, the control renders ribbon buttons for each row.
 ```
 *Inline Ribbon Column Definition*
 
+The control renders ribbon buttons for each row when properly configured.
 
 ![Inline Ribbon](/.attachments/applications/Controls/VirtualDataset/inline_ribbon.png)
 *Inline Ribbon*
@@ -551,8 +597,17 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableEditing</td>
       <td>Enable or disable editing functionality in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
+    </tr>
+    <tr>
+      <td>EnableEditColumns</td>
+      <td>Enable or disable edit columns functionality in the control.</td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -560,8 +615,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnablePagination</td>
       <td>Enable or disable pagination in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -569,8 +624,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableFiltering</td>
       <td>Enable or disable filtering options in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -578,8 +633,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableSorting</td>
       <td>Enable or disable sorting options in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -587,8 +642,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableNavigation</td>
       <td>Enable or disable navigation options in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -596,8 +651,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableOptionSetColors</td>
       <td>Enable or disable OptionSet colors in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"No"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"no"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -605,8 +660,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>SelectableRows</td>
       <td>Defines if and how rows can be selected.</td>
-      <td><code>Enum ("None" | "Single" | "Multiple")</code></td>
-      <td><code>"Single"</code></td>
+      <td><code>Enum ("none" | "single" | "multiple")</code></td>
+      <td><code>"single"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -614,8 +669,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableQuickFind</td>
       <td>Enable or disable the Quick Find feature in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"No"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"no"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -623,8 +678,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnablePageSizeSwitcher</td>
       <td>Whether the user should be allowed to change number of rows per page.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -632,8 +687,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableAggregation</td>
       <td>Whether the user should be allowed to set aggregations on columns</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -641,8 +696,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableGrouping</td>
       <td>Enable or disable grouping functionality in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"No"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"no"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -650,8 +705,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableGroupedColumnsPinning</td>
       <td>Enable or disable pinning of grouped columns in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -659,8 +714,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableCommandBar</td>
       <td>Enable or disable the command bar in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -668,8 +723,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableAutoSave</td>
       <td>Enable or disable automatic saving of changes in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"No"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"no"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -677,8 +732,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableRecordCount</td>
       <td>Enable or disable display of record count in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -686,8 +741,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableZebra</td>
       <td>Enable or disable zebra striping (alternating row colors) in the control.</td>
-      <td><code>Enum ("Yes" | "No")</code></td>
-      <td><code>"Yes"</code></td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -713,8 +768,8 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>GroupingType</td>
       <td>Defines the type of grouping to use when grouping is enabled.</td>
-      <td><code>Enum ("Nested" | "Flat")</code></td>
-      <td><code>"Nested"</code></td>
+      <td><code>Enum ("nested" | "flat")</code></td>
+      <td><code>"nested"</code></td>
       <td><code>N/A</code></td>
       <td><code>input</code></td>
       <td><code>false</code></td>
@@ -742,13 +797,13 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
 </table>
 
 
-## Additional Customization
+## Customization Options
 
-The control supports extended customization through **Client API** and **Cell Customizers**:
+Extended customization is available through:
 - [Client API](./ClientExtensibility/general.md)
 - [Cell Customizers](./CellCustomizers/general.md)
 
- > **_NOTE:_** For local development and testing, use [PCF local harness](https://learn.microsoft.com/en-us/power-apps/developer/component-framework/debugging-custom-controls) with the `_mock` variable set to `true`.
+> **Note:** For local development and testing, use [PCF local harness](https://learn.microsoft.com/en-us/power-apps/developer/component-framework/debugging-custom-controls) with the `_mock` variable set to `true`.
 
 
 
