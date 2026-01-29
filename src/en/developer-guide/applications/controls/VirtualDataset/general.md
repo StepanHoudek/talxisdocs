@@ -339,7 +339,38 @@ Quick Find columns can be specified via [Entity Metadata](#entity-metadata) bind
 ```json
 { "PrimaryIdAttribute": "id", "QuickFindColumns": ["email", "text"] }
 ```
-*Setting quick find on `email` and `text` columns*
+*Setting quick find on `email` and `text` columns.*
+
+If you wish to use Edit Columns feature with Memory Provider, you must specify all columns that can be added via Edit Columns through the `SavedQueries` prop in  [Entity Metadata](#entity-metadata) binding.
+
+```json
+{ "PrimaryIdAttribute": "id", "SavedQueries": [{
+  "columns": [{
+        "name": "text",
+        "alias": "text",
+        "dataType": "SingleLine.Text",
+        "displayName": "Text",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "isPrimary": true,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    },
+    {
+        "name": "multilinetext",
+        "alias": "multilinetext",
+        "dataType": "Multiple",
+        "displayName": "Multiline Text",
+        "order": 0,
+        "visualSizeFactor": 150,
+        "metadata": {
+            "IsValidForUpdate": true
+        }
+    }]
+}] }
+```
+*Setting up Edit Columns with `text` and `multilinetext` columns.*
 
 #### FetchXml Provider
 
@@ -566,6 +597,15 @@ Inline ribbon buttons affect individual rows, while main ribbon buttons affect t
     <tr>
       <td>EnableEditing</td>
       <td>Enable or disable editing functionality in the control.</td>
+      <td><code>Enum ("yes" | "no")</code></td>
+      <td><code>"yes"</code></td>
+      <td><code>N/A</code></td>
+      <td><code>input</code></td>
+      <td><code>false</code></td>
+    </tr>
+    <tr>
+      <td>EnableEditColumns</td>
+      <td>Enable or disable edit columns functionality in the control.</td>
       <td><code>Enum ("yes" | "no")</code></td>
       <td><code>"yes"</code></td>
       <td><code>N/A</code></td>
